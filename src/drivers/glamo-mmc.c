@@ -489,7 +489,6 @@ int mmc_read(unsigned long src, u8 *dst, int size)
 
 int mmc_write(u8 *src, unsigned long dst, int size)
 {
-	int resp;
 	u8 response[16];
 	int size_original = size;
 
@@ -504,27 +503,27 @@ int mmc_write(u8 *src, unsigned long dst, int size)
 		return 0;
 	}
 
-	resp = mmc_cmd(MMC_SET_BLOCKLEN, MMC_BLOCK_SIZE,
-		       MMC_CMD_AC | MMC_RSP_R1, 0, 0, 0,
-		       (u16 *)&response[0]);
+	mmc_cmd(MMC_SET_BLOCKLEN, MMC_BLOCK_SIZE,
+		MMC_CMD_AC | MMC_RSP_R1, 0, 0, 0,
+		(u16 *)&response[0]);
 
 	while (size) {
 		do_pio_write((u16 *)src, MMC_BLOCK_SIZE >> 1);
 		switch (card_type) {
 		case CARDTYPE_SDHC: /* block addressing */
-			resp = mmc_cmd(MMC_WRITE_BLOCK,
-				       dst >> MMC_BLOCK_SIZE_BITS,
-				       MMC_CMD_ADTC | MMC_RSP_R1 |
-								MMC_DATA_WRITE,
-				       MMC_BLOCK_SIZE, 1, 0,
-				       (u16 *)&response[0]);
+			mmc_cmd(MMC_WRITE_BLOCK,
+				dst >> MMC_BLOCK_SIZE_BITS,
+				MMC_CMD_ADTC | MMC_RSP_R1 |
+				MMC_DATA_WRITE,
+				MMC_BLOCK_SIZE, 1, 0,
+				(u16 *)&response[0]);
 			break;
 		default: /* byte addressing */
-			resp = mmc_cmd(MMC_WRITE_BLOCK, dst,
-				       MMC_CMD_ADTC | MMC_RSP_R1 |
-								MMC_DATA_WRITE,
-				       MMC_BLOCK_SIZE, 1, 0,
-				       (u16 *)&response[0]);
+			mmc_cmd(MMC_WRITE_BLOCK, dst,
+				MMC_CMD_ADTC | MMC_RSP_R1 |
+				MMC_DATA_WRITE,
+				MMC_BLOCK_SIZE, 1, 0,
+				(u16 *)&response[0]);
 			break;
 		}
 		if (size >= MMC_BLOCK_SIZE)
