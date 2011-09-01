@@ -105,6 +105,7 @@ void hexdump(unsigned char *start, int len)
 			print8(*start++);
 			(putc_func)(' ');
 		}
+		(putc_func)('\r');
 		(putc_func)('\n');
 		len -= 16;
 	}

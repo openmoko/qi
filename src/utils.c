@@ -54,8 +54,11 @@ char *strcpy(char *dest, const char *src)
 
 int puts(const char *string)
 {
-	while (*string)
+	while (*string) {
+		if (*string == '\n')
+			(putc_func)('\r');
 		(putc_func)(*string++);
+	}
 
 	return 1;
 }
