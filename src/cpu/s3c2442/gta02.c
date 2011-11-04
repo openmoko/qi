@@ -36,6 +36,7 @@
 #define GTA02_DEBUG_UART 2
 #define PCF50633_I2C_ADS 0x73
 #define BOOST_TO_400MHZ 1
+#define KERNEL_SOURCE_NAND_INDEX 3
 
 static int battery_condition_reasonable = 0;
 
@@ -363,7 +364,7 @@ void port_init_gta02(void)
 
 	/* fix up the true start of kernel partition */
 
-	((struct board_api *)&board_api_gta02)->kernel_source[3].
+	((struct board_api *)&board_api_gta02)->kernel_source[KERNEL_SOURCE_NAND_INDEX].
 	     offset_blocks512_if_no_partition = nand_dynparts[2].true_offset;
 
 }
@@ -628,7 +629,7 @@ char * append_device_specific_cmdline_gta02(char * cmdline)
 	 * lie that we are in NAND context... GTA02 specific
 	 * all filesystem access is completed before we are called
 	 */
-	this_kernel = &board_api_gta02.kernel_source[3];
+	this_kernel = &board_api_gta02.kernel_source[KERNEL_SOURCE_NAND_INDEX];
 
 	if (!ext2fs_mount()) {
 		puts("Unable to mount ext2 filesystem\n");
@@ -727,7 +728,7 @@ const struct board_api board_api_gta02 = {
 			.filepath = "boot/uImage-GTA02.bin",
 			.commandline_append = " root=/dev/mmcblk0p3 rootdelay=1 ",
 		},
-		[3] = {
+		[KERNEL_SOURCE_NAND_INDEX] = {
 			.name = "NAND Kernel",
 			.block_read = nand_read_ll,
 			/* NOTE offset below is replaced at runtime */
