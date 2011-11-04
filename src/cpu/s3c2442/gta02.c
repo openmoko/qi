@@ -36,7 +36,7 @@
 #define GTA02_DEBUG_UART 2
 #define PCF50633_I2C_ADS 0x73
 #define BOOST_TO_400MHZ 1
-#define KERNEL_SOURCE_NAND_INDEX 3
+#define KERNEL_SOURCE_NAND_INDEX 4
 
 static int battery_condition_reasonable = 0;
 
@@ -711,6 +711,15 @@ const struct board_api board_api_gta02 = {
 			.commandline_append = " root=/dev/mmcblk0p1 rootdelay=1 ",
 		},
 		[1] = {
+			.name = "SD Card EXT2 P1 Kernel",
+			.block_init = sd_card_init_gta02,
+			.block_read = sd_card_block_read_gta02,
+			.partition_index = 1,
+			.filesystem = FS_EXT2,
+			.filepath = "boot/uImage-GTA02.bin.2",
+			.commandline_append = " root=/dev/mmcblk0p1 rootdelay=1 ",
+		},
+		[2] = {
 			.name = "SD Card EXT2 P2 Kernel",
 			.block_init = sd_card_init_gta02,
 			.block_read = sd_card_block_read_gta02,
@@ -719,7 +728,7 @@ const struct board_api board_api_gta02 = {
 			.filepath = "boot/uImage-GTA02.bin",
 			.commandline_append = " root=/dev/mmcblk0p2 rootdelay=1 ",
 		},
-		[2] = {
+		[3] = {
 			.name = "SD Card EXT2 P3 Kernel",
 			.block_init = sd_card_init_gta02,
 			.block_read = sd_card_block_read_gta02,
