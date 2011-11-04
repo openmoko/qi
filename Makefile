@@ -63,10 +63,10 @@ UDFU_IMAGE = $(IMAGE_DIR)/qi-$(CPU)-$(BUILD_VERSION).udfu
 MKUDFU = $(TOOLS)/mkudfu
 
 %.o: %.S
-	@$(CC) $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) -o $@ $<
 
 %.o: %.c
-	@$(CC) $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) -o $@ $<
 
 all:${UDFU_IMAGE}
 
@@ -77,11 +77,11 @@ ${MKUDFU}:
 
 ${UDFU_IMAGE}:${OBJS} ${MKUDFU}
 	mkdir -p image
-	@$(LD) ${LDFLAGS} -T$(LDS) -g $(OBJS) -o ${TARGET} ${LIBS}
-	@$(OBJCOPY) -O binary -S ${TARGET} ${IMAGE}
-	@$(MKUDFU) -v ${UDFU_VID} -p ${UDFU_PID} -r ${UDFU_REV} \
+	$(LD) ${LDFLAGS} -T$(LDS) -g $(OBJS) -o ${TARGET} ${LIBS}
+	$(OBJCOPY) -O binary -S ${TARGET} ${IMAGE}
+	$(MKUDFU) -v ${UDFU_VID} -p ${UDFU_PID} -r ${UDFU_REV} \
 						-d ${IMAGE} ${UDFU_IMAGE}
-	@$(OBJDUMP) -d ${TARGET} >${IMAGE}.dis
+	$(OBJDUMP) -d ${TARGET} >${IMAGE}.dis
 
 clean:
 	@rm -f *~ src/*.o src/*~
