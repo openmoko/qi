@@ -708,6 +708,7 @@ const struct board_api board_api_gta02 = {
 			.partition_index = 1,
 			.filesystem = FS_EXT2,
 			.filepath = "boot/uImage-GTA02.bin",
+			.initramfs_filepath = "boot/initrd-GTA02.bin",
 			.commandline_append = " root=/dev/mmcblk0p1 rootdelay=1 ",
 		},
 		[1] = {
@@ -717,6 +718,7 @@ const struct board_api board_api_gta02 = {
 			.partition_index = 1,
 			.filesystem = FS_EXT2,
 			.filepath = "boot/uImage-GTA02.bin.2",
+			.initramfs_filepath = "boot/initrd-GTA02.bin.2",
 			.commandline_append = " root=/dev/mmcblk0p1 rootdelay=1 ",
 		},
 		[2] = {
@@ -726,6 +728,7 @@ const struct board_api board_api_gta02 = {
 			.partition_index = 2,
 			.filesystem = FS_EXT2,
 			.filepath = "boot/uImage-GTA02.bin",
+			.initramfs_filepath = "boot/initrd-GTA02.bin",
 			.commandline_append = " root=/dev/mmcblk0p2 rootdelay=1 ",
 		},
 		[3] = {
@@ -735,6 +738,7 @@ const struct board_api board_api_gta02 = {
 			.partition_index = 3,
 			.filesystem = FS_EXT2,
 			.filepath = "boot/uImage-GTA02.bin",
+			.initramfs_filepath = "boot/initrd-GTA02.bin",
 			.commandline_append = " root=/dev/mmcblk0p3 rootdelay=1 ",
 		},
 		[KERNEL_SOURCE_NAND_INDEX] = {
