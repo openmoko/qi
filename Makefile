@@ -18,8 +18,8 @@ include config.mk
 
 BUILD_DATE := $(shell date --iso-8601=seconds)
 BUILD_HOST := $(shell hostname)
-BUILD_BRANCH := $(shell git branch | grep ^\* | cut -d' ' -f2)
-BUILD_HEAD := $(shell git show --pretty=oneline | head -n1 | cut -d' ' -f1 | cut -b1-16)
+BUILD_BRANCH ?= $(shell git branch | grep ^\* | cut -d' ' -f2)
+BUILD_HEAD ?= $(shell git show --pretty=oneline | head -n1 | cut -d' ' -f1 | cut -b1-16)
 BUILD_VERSION := ${BUILD_BRANCH}_${BUILD_HEAD}
 
 LDS	= src/cpu/$(CPU)/qi.lds
