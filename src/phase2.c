@@ -430,13 +430,18 @@ static void try_this_kernel(void)
 
 	if (this_kernel->initramfs_filepath) {
 		indicate(UI_IND_INITRAMFS_PULL);
-		initramfs_len = read_file(this_kernel->initramfs_filepath,
+		ret = read_file(this_kernel->initramfs_filepath,
 		      (u8 *)this_board->linux_mem_start + INITRD_OFFSET,
 						      16 * 1024 * 1024);
-		if (initramfs_len != -ENOENT) {
-			puts("initramfs load failed\n");
-			indicate(UI_IND_INITRAMFS_PULL_FAIL);
-			return;
+		if (ret <= 0) {
+			initramfs_len = 0;
+			if (ret != -ENOENT) {
+				puts("initramfs load failed\n");
+				indicate(UI_IND_INITRAMFS_PULL_FAIL);
+				return;
+			}
+		} else {
+			initramfs_len = ret;
 		}
 		indicate(UI_IND_INITRAMFS_PULL_OK);
 	}
