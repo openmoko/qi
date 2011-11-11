@@ -40,6 +40,9 @@ struct kernel_source const * this_kernel = 0;
 
 static const int INITRD_OFFSET = (8 * 1024 * 1024);
 
+#define	ENOENT		 2	/* No such file or directory */
+#define	EIO		 5	/* I/O error */
+#define	EPIPE		32	/* Broken pipe */
 
 int raise(int n)
 {
@@ -62,20 +65,20 @@ static int read_file(const char * filepath, u8 * destination, int size)
 		if (!ext2fs_mount()) {
 			puts("Unable to mount ext2 filesystem\n");
 			indicate(UI_IND_MOUNT_FAIL);
-			return -2; /* death */
+			return -EPIPE; /* death */
 		}
 		puts("    EXT2 open: ");
 		puts(filepath);
 		len = ext2fs_open(filepath);
 		if (len < 0) {
 			puts(" Open failed\n");
-			return -1;
+			return -ENOENT;
 		}
 		puts(" OK\n");
 		ret = ext2fs_read((char *)destination, size);
 		if (ret < 0) {
 			puts(" Read failed\n");
-			return -1;
+			return -EIO;
 		}
 		break;
 
@@ -84,14 +87,14 @@ static int read_file(const char * filepath, u8 * destination, int size)
 	case FS_RAW:
 		/* any filename-related request in raw filesystem will fail */
 		if (filepath)
-			return -1;
+			return -ENOENT;
 		puts("     RAW open: +");
 		printdec(partition_offset_blocks);
 		puts(" 512-byte blocks\n");
 		if (this_kernel->block_read(destination,
 				      partition_offset_blocks, size >> 9) < 0) {
 			puts("Bad kernel header\n");
-			return -1;
+			return -EIO;
 		}
 		break;
 	}
@@ -211,7 +214,7 @@ static void do_params(unsigned initramfs_len,
 	params->u.mem.size = this_board->linux_mem_size;
 	params = tag_next(params);
 
-	if (this_kernel->initramfs_filepath) {
+	if (initramfs_len > 0) {
 		/* INITRD2 tag */
 		params->hdr.tag = ATAG_INITRD2;
 		params->hdr.size = tag_size(tag_initrd);
@@ -394,8 +397,8 @@ static void try_this_kernel(void)
 	/* does he want us to skip this? */
 
 	ret = read_file(this_board->noboot, kernel_dram, 512);
-	if (ret != -1) {
-		/* -2 (mount fail) should make us give up too */
+	if (ret != -ENOENT) {
+		/* other errors (i.e. mount fail) should make us give up too */
 		if (ret >= 0) {
 			puts("    (Skipping on finding ");
 			puts(this_board->noboot);
@@ -430,7 +433,7 @@ static void try_this_kernel(void)
 		initramfs_len = read_file(this_kernel->initramfs_filepath,
 		      (u8 *)this_board->linux_mem_start + INITRD_OFFSET,
 						      16 * 1024 * 1024);
-		if (initramfs_len < 0) {
+		if (initramfs_len != -ENOENT) {
 			puts("initramfs load failed\n");
 			indicate(UI_IND_INITRAMFS_PULL_FAIL);
 			return;
